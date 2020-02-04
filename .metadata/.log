@@ -4090,3 +4090,6 @@ java.io.IOException: Unable to resolve plug-in "org.springframework.ide.eclipse.
 	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:597)
 	at org.eclipse.equinox.launcher.Main.run(Main.java:1476)
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1449)
+
+!ENTRY org.eclipse.jface.text 2 0 2020-02-04 11:40:38.072
+!MESSAGE Duplicate template id: 'org.eclipse.wst.xslt.templates.xpath.boolean'
