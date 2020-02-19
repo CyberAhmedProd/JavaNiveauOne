@@ -1,0 +1,194 @@
+set serveroutput on
+1)BEGIN
+DBMS_OUTPUT.PUT_LINE('Bonjour');
+END;
+/ pour exécuter 
+2)BEGIN
+DBMS_OUTPUT.PUT_LINE('R1' || '41');
+END;
+/
+3)
+DECLARE
+ i SMALLINT;
+ 
+BEGIN
+FOR i in 1..15 LOOP
+DBMS_OUTPUT.PUT_LINE(i);	 
+END LOOP;
+END;
+4)
+DECLARE
+ i SMALLINT;
+ som NUMBER(13);
+BEGIN
+som := 0;
+FOR i in 1000..10000 LOOP
+som := som + i;
+END LOOP;
+DBMS_OUTPUT.PUT_LINE(som);	 
+
+END;
+5)
+DECLARE
+res SMALLINT;
+BEGIN
+res := 17664;
+WHILE(res>171)
+LOOP
+res := res-171;
+END LOOP;
+DBMS_OUTPUT.PUT_LINE(res);	 
+END;
+
+6)
+DECLARE
+A SMALLINT;
+i SMALLINT;
+res SMALLINT;
+BEGIN
+A := '& _enter_un_chiffre';
+res := 1;
+FOR i in 1..9 LOOP
+res := i*A;
+DBMS_OUTPUT.PUT_LINE(A||'*'||i||'='||res);
+END LOOP;
+END;	 
+END;
+
+Exercice 2 
+CREATE TABLE voituree(
+NOV NUMBER(4),
+MV VARCHAR(13),
+KM NUMBER(12),
+PSG NUMBER(1),
+CONSTRAINT pk_voiture PRIMARY KEY(NOV));
+
+
+CREATE TABLE chh(
+NCH NUMBER(4),
+CHAUFFEUR VARCHAR(20),
+CONSTRAINT pk_ch PRIMARY KEY(NCH));
+
+CREATE TABLE v_chh(
+NOV NUMBER(4),
+NCH NUMBER(4),
+NKM NUMBER(12),
+CONSTRAINT myconst1 FOREIGN KEY(NOV) REFERENCES voituree(NOV),
+CONSTRAINT myconst2 FOREIGN KEY(NCH) REFERENCES chh(NCH),
+CONSTRAINT pk_one PRIMARY KEY(NOV,NCH));
+
+CREATE TABLE reparationn(
+NOPREP NUMBER(4),
+NOV NUMBER(4),
+NOG NUMBER(7),
+TYPREP VARCHAR(5),
+PX NUMBER(6,2),
+KMCPT NUMBER(12),
+CONSTRAINT myconst3p PRIMARY KEY(NOPREP),
+CONSTRAINT myconst4f FOREIGN KEY(NOV) REFERENCES voituree(NOV));
+
+CREATE TABLE TRAJET(
+NOTRAJ NUMBER(4),
+VILLEDEP VARCHAR(12),
+VILLEARR VARCHAR(12),
+DATETRAJET DATE,
+NBKM VARCHAR(12),
+CONSTRAINT myconstraint5p PRIMARY KEY(NOTRAJ));
+
+CREATE TABLE tr_novv(
+NOTRAJ NUMBER(4),
+NOV NUMBER(4),
+NCH NUMBER(4),
+NBPERSTR NUMBER(12),
+CONSTRAINT myconst7 FOREIGN KEY(NOV) REFERENCES voituree(NOV),
+CONSTRAINT myconst8 FOREIGN KEY(NCH) REFERENCES chh(NCH),
+CONSTRAINT myconst9 FOREIGN KEY(NOTRAJ) REFERENCES TRAJET(NOTRAJ),
+CONSTRAINT myconst10 PRIMARY KEY(NOV,NCH,NOTRAJ));
+
+
+
+1)
+DECLARE
+ville TRAJET.VILLEDEP%TYPE;
+
+BEGIN
+ville := '& _enter_un_nom_de_ville';
+
+DBMS_OUTPUT.PUT_LINE(ville);
+
+	 
+END;
+2)
+
+DECLARE
+notraj TRAJET.NOTRAJ%TYPE;
+villeD TRAJET.VILLEDEP%TYPE;
+villeA TRAJET.VILLEARR%TYPE;
+dateT TRAJET.DATETRAJET%TYPE;
+BEGIN
+notraj:= '& _enter_un_numero_trajet';
+SELECT VILLEDEP,VILLEARR,DATETRAJET INTO villeD,villeA,dateT FROM TRAJET WHERE NOTRAJ=notraj;  
+DBMS_OUTPUT.PUT_LINE('ville depart'||villeD);
+DBMS_OUTPUT.PUT_LINE('ville arrive'||villeA);
+DBMS_OUTPUT.PUT_LINE('DATE:'||dateT);
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+DBMS_OUTPUT.PUT_LINE('ERROR!!');	 
+END;
+3)
+DECLARE
+nville TRAJET.VILLEDEP%TYPE;
+moy NUMBER(6,3);
+max TRAJET.NBKM%TYPE;
+min NUMBER(12);
+BEGIN
+nville:= '& _enter_une_ville';
+SELECT AVG(NBKM),MAX(NBKM),MIN(NBKM) INTO moy,max,min FROM TRAJET WHERE VILLEDEP=nville GROUP BY VILLEDEP;  
+DBMS_OUTPUT.PUT_LINE('moy '||moy);
+DBMS_OUTPUT.PUT_LINE('max '||max);
+DBMS_OUTPUT.PUT_LINE('min '||min);
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+DBMS_OUTPUT.PUT_LINE('ERROR!!');	 
+END;
+
+4)
+DECLARE
+annee varchar(20);
+num voituree.NOV%TYPE;
+marque voituree.MV%TYPE;
+nbMax NUMBER(6);
+BEGIN
+annee := '& _enter_une_annee_t';
+SELECT max(count(TR_NOV.NOTRAJ)) into nbMax from TR_NOV,TRAJET where TR_NOV.NOTRAJ=TRAJET.NOTRAJ and to_char(DATETRAJET,'YYYY')=annee group by TR_NOV.NOV;  
+if nbMax >0 then
+SELECT NOV into num FROM TR_NOV GROUP BY NOV HAVING COUNT(NOTRAJ) = nbMax ;
+SELECT MV into marque FROM voituree WHERE NOV=num;
+DBMS_OUTPUT.PUT_LINE('maxNB:'|| nbMax );
+END IF
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+DBMS_OUTPUT.PUT_LINE('ERROR!!');	 
+END;
+6)
+DECLARE
+TYPE REP is RECORD
+(NOREP reparationn.NOREP%TYPE,
+NOV voituree.NOV%TYPE,
+NOG reparationn.NOG%TYPE,
+TYPREP reparationn.TYPREP%TYPE,
+PX reparationn.PX%TYPE,
+KMCPT reparationn.KMCPT%TYPE);
+R REP;
+BEGIN
+R.NOREP='& _enter_un_numero_reparation';
+R.NOV='& _enter_un_numero_voiture';
+R.NOG='& _enter_un_numero_garage';
+R.TYPREP='& _enter_un_type_reparation';  
+R.PX='& _enter_le_prix';
+R.KMCPT='& _enter_un_nombre_kilometrage';
+INSERT into reparationn values(R.NOREP,R.NOV,R.NOG,R.TYPREP,R.PX,R.KMCPT);
+END
+
+
+
