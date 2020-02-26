@@ -1,0 +1,83 @@
+alter user hr account unlock;
+alter user hr identified by hr;
+connect hr/hr
+DESC employees
+pour utiliser la base SCOTT
+exercice 1:
+1)
+DECLARE
+CURSOR c1 is SELECT FIRST_NAME from employees;
+res employees.FIRST_NAME%TYPE;
+BEGIN
+OPEN c1;
+FETCH c1 into res;
+DBMS_OUTPUT.PUT_LINE(res);
+CLOSE c1;
+END;
+2)
+DECLARE
+CURSOR c1 is SELECT FIRST_NAME from employees;
+res employees.FIRST_NAME%TYPE;
+BEGIN
+OPEN c1;
+loop
+FETCH c1 into res;
+DBMS_OUTPUT.PUT_LINE(res);
+exit when c1%rowcount=5;
+end loop; 
+CLOSE c1;
+END;
+3)
+DECLARE
+CURSOR c1 is SELECT FIRST_NAME from employees;
+res employees.FIRST_NAME%TYPE;
+BEGIN
+OPEN c1;
+loop
+FETCH c1 into res;
+DBMS_OUTPUT.PUT_LINE(res);
+exit when c1%notfound;
+4)
+DECLARE
+CURSOR c1 is SELECT FIRST_NAME from employees;
+res employees.FIRST_NAME%TYPE;
+BEGIN
+OPEN c1;
+loop
+FETCH c1 into res;
+exit when c1%notfound;
+end loop;
+DBMS_OUTPUT.PUT_LINE(res); 
+CLOSE c1;
+END;
+
+
+EXERCICE N2
+create TABLE PILOTE(matricule VARCHAR(4) PRIMARY KEY,
+NOM VARCHAR(10),
+VILLE VARCHAR(10),
+AGE NUMBER(3),
+SALAIRE NUMBER(6,2));
+
+insert into PILOTE values('hahe','ahmed','monastir',12,1000.02)
+
+insert into PILOTE values('haha','ahmedo','sousse',12,1200.02)
+----------------------------------
+
+DECLARE
+CURSOR c2 is SELECT SALAIRE from PILOTE where AGE>30 and AGE<40;
+res PILOTE.SALAIRE%TYPE;
+som NUMBER(10,2);
+resuslt NUMBER(10,2);
+BEGIN
+som :=0;
+OPEN c2;
+loop
+FETCH c2 into res;
+exit when c2%notfound;
+som := som +res;
+end loop;
+resuslt := som / c2%rowcount;
+DBMS_OUTPUT.PUT_LINE(resuslt); 
+CLOSE c2;
+END;
